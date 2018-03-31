@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.4.0";
+var myProductName = "davefeedread"; myVersion = "0.4.5";
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -64,8 +64,13 @@ function parseFeedString (theString, charset, callback) {
 		};
 	
 	if (charset !== undefined) {
-		var iconv = new Iconv (charset, "UTF-8");
-		theString = iconv.convert (theString).toString ();
+		try {
+			var iconv = new Iconv (charset, "UTF-8");
+			theString = iconv.convert (theString).toString ();
+			}
+		catch (err) {
+			console.log ("parseFeedString: err.message == " + err.message);
+			}
 		}
 	
 	var theStream = new stream.Readable;
@@ -90,7 +95,7 @@ function parseFeedString (theString, charset, callback) {
 		});
 	feedparser.on ("error", function (err) {
 		console.log ("parseFeedString: err.message == " + err.message);
-		callback (err);
+		callback (err, theFeed);
 		});
 	feedparser.on ("end", function () {
 		callback (undefined, theFeed);
@@ -114,18 +119,29 @@ function parseFeedUrl (feedUrl, timeOutSecs, callback) {
 		}
 	request (theRequest, function (err, response, theString) {
 		if (err) {
-			callback (err);
+			if (callback !== undefined) {
+				var theErrorResponse = {
+					statusCode: 400 //something like ENOTFOUND or ETIMEDOUT
+					};
+				callback (err, undefined, theErrorResponse);
+				}
 			}
 		else {
 			if (response.statusCode != 200) {
-				var theErrorResponse = {
-					message: "Error reading the feed, response.statusCode == " + response.statusCode + ".",
-					statusCode: response.statusCode
-					};
-				callback (theErrorResponse);
+				if (callback !== undefined) {
+					var theErrorResponse = {
+						message: "Error reading the feed, response.statusCode == " + response.statusCode + ".",
+						statusCode: response.statusCode
+						};
+					callback (theErrorResponse, undefined, response);
+					}
 				}
 			else {
-				parseFeedString (theString, getCharset (response), callback);
+				parseFeedString (theString, getCharset (response), function (err, theFeed) {
+					if (callback !== undefined) {
+						callback (undefined, theFeed, response);
+						}
+					});
 				}
 			}
 		});
