@@ -1,7 +1,5 @@
 # feedRead
 
-Read a feed and call back with a JavaScript structure.
-
 ### What is this?
 
 It's a Node package that contains everything you need to read a feed. 
