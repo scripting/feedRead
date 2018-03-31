@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.4.5";
+var myProductName = "davefeedread"; myVersion = "0.4.6";
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
