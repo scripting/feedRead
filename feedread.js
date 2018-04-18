@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.4.7";
+var myProductName = "davefeedread"; myVersion = "0.4.14";
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -30,7 +30,7 @@ const utils = require ("daveutils");
 const feedParser = require ("feedparser");
 const request = require ("request");
 const stream = require ("stream");
-const Iconv = require ("iconv").Iconv;
+const iconv = require ("iconv-lite");
 
 const metaNames = { 
 	title: true,
@@ -56,20 +56,23 @@ function getCharset (httpResponse) {
 		}
 	return (undefined); //no charset specified
 	}
-function parseFeedString (theString, charset, callback) {
+function parseFeedString (theString, charset, callback, errMsgPrefix) {
 	var feedparser = new feedParser ();
 	var theFeed = {
 		head: new Object (),
 		items: new Array ()
 		};
-	
+	function consoleMessage (s) {
+		if (errMsgPrefix !== undefined) {
+			console.log (errMsgPrefix + ", " + s);
+			}
+		}
 	if (charset !== undefined) {
 		try {
-			var iconv = new Iconv (charset, "UTF-8");
-			theString = iconv.convert (theString).toString ();
+			theString = iconv.decode (theString, charset); //4/18/18 by DW -- use iconv-lite
 			}
 		catch (err) {
-			console.log ("parseFeedString: err.message == " + err.message);
+			consoleMessage ("err.message == " + err.message);
 			}
 		}
 	
@@ -94,7 +97,7 @@ function parseFeedString (theString, charset, callback) {
 			}
 		});
 	feedparser.on ("error", function (err) {
-		console.log ("parseFeedString: err.message == " + err.message);
+		consoleMessage ("err.message == " + err.message);
 		callback (err, theFeed);
 		});
 	feedparser.on ("end", function () {
@@ -139,9 +142,9 @@ function parseFeedUrl (feedUrl, timeOutSecs, callback) {
 			else {
 				parseFeedString (theString, getCharset (response), function (err, theFeed) {
 					if (callback !== undefined) {
-						callback (undefined, theFeed, response);
+						callback (err, theFeed, response); //4/17/18 by DW -- pass err back to caller
 						}
-					});
+					}, myProductName + ": feedUrl == " + feedUrl);
 				}
 			}
 		});
