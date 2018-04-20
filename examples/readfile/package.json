@@ -1,0 +1,14 @@
+{
+	"name": "example2",
+	"description": "A test app for the davefeedread package, reads a feed from a local file.",
+	"author": "Dave Winer <dave@smallpicture.com>",
+	"version": "0.4.0",
+	"dependencies" : {
+		"davefeedread": "*",
+		"daveutils": "*"
+		}, 
+	"license": "MIT",
+	"engines": {
+		"node": "*"
+		}
+	}

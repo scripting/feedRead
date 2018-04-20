@@ -1,6 +1,6 @@
 {
-	"name": "test",
-	"description": "A test app for the davefeedread package.",
+	"name": "example1",
+	"description": "A test app for the davefeedread package, reads a feed from the NY Times website, parses it, and displays some of the information.",
 	"author": "Dave Winer <dave@smallpicture.com>",
 	"version": "0.4.0",
 	"dependencies" : {

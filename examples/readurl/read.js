@@ -1,7 +1,7 @@
 const utils = require ("daveutils");
 const feedRead = require ("davefeedread");
 
-const urlTestFeed = "http://scripting.com/rss.xml";
+const urlTestFeed = "http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml";
 const whenstart = new Date ();
 
 feedRead.parseUrl (urlTestFeed, undefined, function (err, theFeed) {
