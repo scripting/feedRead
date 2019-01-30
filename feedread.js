@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.5.0";
+var myProductName = "davefeedread"; myVersion = "0.5.2";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -62,10 +62,8 @@ function parseFeedString (theString, charset, callback, errMsgPrefix) {
 		head: new Object (),
 		items: new Array ()
 		};
+	var flCalledBack = false; //1/29/19 by DW
 	function consoleMessage (s) {
-		if (errMsgPrefix !== undefined) {
-			console.log (errMsgPrefix + ", " + s);
-			}
 		}
 	if (charset !== undefined) {
 		try {
@@ -73,6 +71,10 @@ function parseFeedString (theString, charset, callback, errMsgPrefix) {
 			}
 		catch (err) {
 			consoleMessage ("err.message == " + err.message);
+			if (callback !== undefined) { //1/26/19 by DW
+				flCalledBack = true;
+				callback (err);
+				}
 			}
 		}
 	
@@ -98,10 +100,20 @@ function parseFeedString (theString, charset, callback, errMsgPrefix) {
 		});
 	feedparser.on ("error", function (err) {
 		consoleMessage ("err.message == " + err.message);
-		callback (err, theFeed);
+		if (!flCalledBack) { //make sure the callback is only called once -- 1/29/19 by DW
+			flCalledBack = true;
+			if (callback !== undefined) {
+				callback (err, theFeed);
+				}
+			}
 		});
 	feedparser.on ("end", function () {
-		callback (undefined, theFeed);
+		if (!flCalledBack) {
+			flCalledBack = true;
+			if (callback !== undefined) {
+				callback (undefined, theFeed);
+				}
+			}
 		});
 	
 	theStream.pipe (feedparser);
