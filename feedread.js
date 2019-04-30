@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.5.2";   
+var myProductName = "davefeedread"; myVersion = "0.5.7";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2019 Dave Winer
@@ -25,12 +25,15 @@ var myProductName = "davefeedread"; myVersion = "0.5.2";
 exports.parseString = parseFeedString;
 exports.parseUrl = parseFeedUrl;
 exports.getCharset = getCharset;
+exports.startCloud = startCloud; //4/30/19 by DW
 
 const utils = require ("daveutils");
 const feedParser = require ("feedparser");
 const request = require ("request");
 const stream = require ("stream");
 const iconv = require ("iconv-lite");
+const qs = require ("querystring");
+const davehttp = require ("davehttp"); 
 
 const metaNames = { 
 	title: true,
@@ -44,6 +47,103 @@ const metaNames = {
 	image: true,
 	categories: true
 	};
+
+//rssCloud support -- 4/30/19 by DW
+	var cloudConfig = { 
+		flPingEnabled: false, //if true, we set up a server to receive pings from the cloud server
+		port: 1414, //the port the ping receiver runs on
+		path: "/feedping", //the message we ask the ping server to send us
+		timeOutSecs: 30,
+		feedUpdatedCallback: function (feedUrl, callback) {
+			if (callback !== undefined) {
+				callback ();
+				}
+			}
+		};
+	var cloudFeeds = new Object (); 
+	
+	function pleaseNotify (feedUrl, theCloud, callback) {
+		var urlCloudServer = "http://" + theCloud.domain + ":" + theCloud.port + theCloud.path;
+		var now = new Date ();
+		var theRequest = {
+			url: urlCloudServer,
+			followRedirect: true, 
+			headers: {Accept: "application/json"},
+			method: "POST",
+			form: {
+				port: cloudConfig.port,
+				path: cloudConfig.path,
+				url1: feedUrl,
+				protocol: "http-post"
+				}
+			};
+		request (theRequest, function (err, response, body) {
+			if (err) {
+				console.log ("pleaseNotify: err.message == " + err.message);
+				}
+			else {
+				console.log ("pleaseNotify: response == " + utils.jsonStringify (response));
+				}
+			});
+		}
+	function checkForCloud (feedUrl, theFeed) { //4/30/19 by DW
+		if (cloudConfig.flPingEnabled) {
+			if (theFeed.head.cloud !== undefined) {
+				if (cloudFeeds [feedUrl] === undefined) { //haven't registered with cloud server for this feed
+					pleaseNotify (feedUrl, theFeed.head.cloud);
+					cloudFeeds [feedUrl] = new Date ();
+					}
+				}
+			}
+		}
+	function startCloud (options, callback) { //4/30/19 by DW
+		function everyHour () {
+			cloudFeeds = new Object (); //re-request notification every hour
+			}
+		function startServer (callback) {
+			var httpconfig = {
+				port: cloudConfig.port,
+				flPostEnabled: true,
+				flLogToConsole: true
+				};
+			davehttp.start (httpconfig, function (theRequest) {
+				if (theRequest.lowerpath == cloudConfig.path) {
+					var jstruct = qs.parse (theRequest.postBody);
+					cloudConfig.feedUpdatedCallback (jstruct.url, function (err, data) {
+						if (err) {
+							theRequest.httpReturn (500, "text/plain", err.message);
+							}
+						else {
+							if (data) {
+								theRequest.httpReturn (200, "application/json", utils.jsonStringify (data));
+								}
+							else {
+								theRequest.httpReturn (200, "text/plain", "Thanks for the update! ;-)");
+								}
+							}
+						});
+					}
+				else {
+					theRequest.httpReturn (404, "text/plain", "Not found.");
+					}
+				});
+			if (callback !== undefined) {
+				callback ();
+				}
+			}
+		
+		if (options !== undefined) {
+			for (var x in options) {
+				cloudConfig [x] = options [x];
+				}
+			}
+		cloudConfig.flPingEnabled = true;
+		
+		console.log ("startCloud: options == " + utils.jsonStringify (options));
+		
+		startServer (callback);
+		setInterval (everyHour, 60 * 60 * 1000); 
+		}
 
 function getCharset (httpResponse) {
 	var contentType = httpResponse.headers ["content-type"];
@@ -153,6 +253,7 @@ function parseFeedUrl (feedUrl, timeOutSecs, callback) {
 				}
 			else {
 				parseFeedString (theString, getCharset (response), function (err, theFeed) {
+					checkForCloud (feedUrl, theFeed); //4/30/19 by DW
 					if (callback !== undefined) {
 						callback (err, theFeed, response); //4/17/18 by DW -- pass err back to caller
 						}
