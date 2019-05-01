@@ -20,5 +20,5 @@ It also provides good sample code for more advanced feed reading projects.
 
 There are two very basic examples, one that parses a feed that it reads <a href="https://github.com/scripting/feedRead/blob/master/examples/readurl/read.js">over the web</a>, and one that it reads from a <a href="https://github.com/scripting/feedRead/blob/master/examples/readfile/read.js">local file</a>.
 
-A thiird example demonstrates a feature added in May 2019, that makes it easy to support <a href="https://github.com/scripting/feedRead/blob/master/examples/readfile/read.js">realtime updates</a> via rssCloud. 
+A third example is a realistic <a href="https://github.com/scripting/feedRead/blob/master/examples/cloud/read.js">feed polling app</a>, it checks a feed every five minutes and writes the JSON structure out to a local disk. It automatically supports <a href="https://en.blog.wordpress.com/2009/09/07/rss-in-the-clouds/">rssCloud</a>, so you get realtime updates if the feed supports that protocol, which is part of RSS 2.0. 
 
