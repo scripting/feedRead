@@ -16,5 +16,9 @@ Sometimes you need to quickly read a feed and do something with it, and don't ha
 
 It also provides good sample code for more advanced feed reading projects. 
 
-And as you may have heard <a href="https://www.wired.com/story/rss-readers-feedly-inoreader-old-reader/">RSS is coming back</a> in a big way, and it's spring, and time for a little cleaning. ;-)
+### Example code
+
+There are two very basic examples, one that parses a feed that it reads <a href="https://github.com/scripting/feedRead/blob/master/examples/readurl/read.js">over the web</a>, and one that it reads from a <a href="https://github.com/scripting/feedRead/blob/master/examples/readfile/read.js">local file</a>.
+
+A thiird example demonstrates a feature added in May 2019, that makes it easy to support <a href="https://github.com/scripting/feedRead/blob/master/examples/readfile/read.js">realtime updates</a> via rssCloud. 
 
