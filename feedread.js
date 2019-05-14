@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.5.8";   
+var myProductName = "davefeedread"; myVersion = "0.5.9";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2019 Dave Winer
@@ -156,6 +156,21 @@ function getCharset (httpResponse) {
 		}
 	return (undefined); //no charset specified
 	}
+function checkForNoneLengthEnclosures (theFeed) { //5/14/19 by DW
+	//feedparser under some circumstances will return a length for an enclosure of "None". 
+		//this is not what my apps were expecting and as a result we missed a bunch of podcasts due to errors.
+		//zero is much easier to handle, and there really is no correct value if the length is omitted, since it is required by RSS 2.0.
+		//but what can you do -- this is the real world, and this happens. examples -- Radio Lab, Here's the Thing.
+	theFeed.items.forEach (function (item) {
+		if (item.enclosures !== undefined) {
+			item.enclosures.forEach (function (enc) {
+				if (enc.length == "None") {
+					enc.length = 0;
+					}
+				});
+			}
+		});
+	}
 function parseFeedString (theString, charset, callback, errMsgPrefix) {
 	var feedparser = new feedParser ();
 	var theFeed = {
@@ -254,6 +269,7 @@ function parseFeedUrl (feedUrl, timeOutSecs, callback) {
 			else {
 				parseFeedString (theString, getCharset (response), function (err, theFeed) {
 					checkForCloud (feedUrl, theFeed); //4/30/19 by DW
+					checkForNoneLengthEnclosures (theFeed); //5/14/19 by DW
 					if (callback !== undefined) {
 						callback (err, theFeed, response); //4/17/18 by DW -- pass err back to caller
 						}
