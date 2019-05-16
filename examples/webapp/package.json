@@ -1,0 +1,15 @@
+{
+	"name": "feedreadviewer",
+	"description": "A simple web app that reads a feed and runs it through the davefeedread package, and displays the result. Essential for debugging feed reading apps.",
+	"author": "Dave Winer <dave@smallpicture.com>",
+	"version": "0.4.1",
+	"dependencies" : {
+		"davefeedread": "*",
+		"davehttp": "*",
+		"daveutils": "*"
+		}, 
+	"license": "MIT",
+	"engines": {
+		"node": "*"
+		}
+	}

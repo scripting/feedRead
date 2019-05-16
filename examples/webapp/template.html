@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<title>feedRead viewer</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="http://fargo.io/code/jquery-1.9.1.min.js"></script>
+		<link href="http://fargo.io/code/bootstrap.css" rel="stylesheet">
+		<script src="http://fargo.io/code/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="http://fargo.io/code/fontAwesome/css/font-awesome.min.css"/>
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+		<script>
+			function everySecond () {
+				}
+			function startup () {
+				console.log ("startup");
+				self.setInterval (function () {everySecond ()}, 1000); 
+				}
+			</script>
+		<style>
+			body {
+				font-family: Ubuntu;
+				font-size: 18px;
+				background-color: whitesmoke;
+				}
+			.divPageBody {
+				width: 75%;
+				margin-top: 30px;
+				margin-left: auto;
+				margin-right: auto;
+				margin-bottom: 400px;
+				}
+			.divUrl {
+				margin-top: 25px;
+				margin-bottom: 10px;
+				}
+			pre {
+				background-color: white;
+				}
+			.divWhatIsThis {
+				float: right;
+				font-size: 16px;
+				}
+			</style>
+		</head>
+	<body>
+		<div class="divPageBody">
+			<div class="divWhatIsThis">
+				<a href="http://scripting.com/2019/05/16/162444.html">What is this?</a>
+				</div>
+			<div class="divUrl">
+				[%url%]
+				</div>
+			<pre id="idXmlViewer">[%bodytext%]</pre>
+			</div>
+		<script>
+			$(document).ready (function () {
+				startup ();
+				});
+			</script>
+		</body>
+	</html>
