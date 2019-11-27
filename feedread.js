@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.5.9";   
+var myProductName = "davefeedread"; myVersion = "0.5.11";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2019 Dave Winer
@@ -161,15 +161,17 @@ function checkForNoneLengthEnclosures (theFeed) { //5/14/19 by DW
 		//this is not what my apps were expecting and as a result we missed a bunch of podcasts due to errors.
 		//zero is much easier to handle, and there really is no correct value if the length is omitted, since it is required by RSS 2.0.
 		//but what can you do -- this is the real world, and this happens. examples -- Radio Lab, Here's the Thing.
-	theFeed.items.forEach (function (item) {
-		if (item.enclosures !== undefined) {
-			item.enclosures.forEach (function (enc) {
-				if (enc.length == "None") {
-					enc.length = 0;
-					}
-				});
-			}
-		});
+	if (theFeed !== undefined) { //11/27/19 by DW -- this happens in feedbase
+		theFeed.items.forEach (function (item) {
+			if (item.enclosures !== undefined) {
+				item.enclosures.forEach (function (enc) {
+					if (enc.length == "None") {
+						enc.length = 0;
+						}
+					});
+				}
+			});
+		}
 	}
 function parseFeedString (theString, charset, callback, errMsgPrefix) {
 	var feedparser = new feedParser ();
