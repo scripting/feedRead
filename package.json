@@ -1,8 +1,8 @@
 {
 	"name": "davefeedread",
 	"description": "Read a feed and call back with a JavaScript structure.",
-	"author": "Dave Winer <dave@smallpicture.com>",
-	"version": "0.5.11", 
+	"author": "Dave Winer <dave@scripting.com>",
+	"version": "0.5.14", 
 	"dependencies" : {
 		"request": "*",
 		"iconv-lite": "*",
@@ -11,8 +11,7 @@
 		"feedparser": "*"
 		}, 
 	"files": [
-		"feedread.js",
-		"testing"
+		"feedread.js"
 		],
 	"main": "feedread.js",
 	"repository": {
