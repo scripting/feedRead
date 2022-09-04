@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.5.14";   
+var myProductName = "davefeedread"; myVersion = "0.5.19";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2019 Dave Winer
@@ -45,7 +45,8 @@ const metaNames = {
 	generator: true,
 	cloud: true,
 	image: true,
-	categories: true
+	categories: true,
+	"atom:link": true //6/14/22 by DW
 	};
 
 //rssCloud support -- 4/30/19 by DW
@@ -206,7 +207,21 @@ function parseFeedString (theString, charset, callback, errMsgPrefix) {
 				theFeed.items.push (item);
 				for (var x in item.meta) {
 					if (metaNames [x] !== undefined) {
-						theFeed.head [x] = item.meta [x];
+						if (x == "atom:link") {
+							try {
+								item.meta [x].forEach (function (link) {
+									var rel = link ["@"].rel;
+									if (rel == "self") {
+										theFeed.head.linkToSelf = link ["@"].href;
+										}
+									});
+								}
+							catch (err) {
+								}
+							}
+						else {
+							theFeed.head [x] = item.meta [x];
+							}
 						}
 					}
 				}

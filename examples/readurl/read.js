@@ -2,7 +2,7 @@ const fs = require ("fs");
 const utils = require ("daveutils");
 const feedRead = require ("davefeedread");
 
-const urlTestFeed = "http://feeds.wnyc.org/radiolab";
+const urlTestFeed = "https://blog.docuverse.com/feed/";
 const timeOutSecs = 30;
 const whenstart = new Date ();
 

@@ -1,8 +1,8 @@
 {
-	"name": "davefeedread",
+	"name": "davefeedread", 
 	"description": "Read a feed and call back with a JavaScript structure.",
 	"author": "Dave Winer <dave@scripting.com>",
-	"version": "0.5.14", 
+	"version": "0.5.19", 
 	"dependencies" : {
 		"request": "*",
 		"iconv-lite": "*",
