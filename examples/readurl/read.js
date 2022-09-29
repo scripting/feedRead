@@ -2,7 +2,7 @@ const fs = require ("fs");
 const utils = require ("daveutils");
 const feedRead = require ("davefeedread");
 
-const urlTestFeed = "https://blog.docuverse.com/feed/";
+const urlTestFeed = "http://www.kenrockwell.com/rss.php";
 const timeOutSecs = 30;
 const whenstart = new Date ();
 

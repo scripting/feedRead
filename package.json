@@ -2,10 +2,11 @@
 	"name": "davefeedread", 
 	"description": "Read a feed and call back with a JavaScript structure.",
 	"author": "Dave Winer <dave@scripting.com>",
-	"version": "0.5.19", 
+	"version": "0.5.22", 
 	"dependencies" : {
 		"request": "*",
 		"iconv-lite": "*",
+		"xml2js": "*",
 		"daveutils": "*",
 		"davehttp": "*",
 		"feedparser": "*"

@@ -1,5 +1,5 @@
 const utils = require ("daveutils");
-const feedRead = require ("davefeedread");
+const feedRead = require (""../../feedread.js");
 const fs = require ("fs");
 
 fs.readFile ("rss.xml", function (err, filetext) {

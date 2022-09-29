@@ -1,7 +1,7 @@
-var myProductName = "davefeedread"; myVersion = "0.5.19";   
+var myProductName = "davefeedread"; myVersion = "0.5.22";   
 
 /*  The MIT License (MIT)
-	Copyright (c) 2014-2019 Dave Winer
+	Copyright (c) 2014-2022 Dave Winer
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@ const stream = require ("stream");
 const iconv = require ("iconv-lite");
 const qs = require ("querystring");
 const davehttp = require ("davehttp"); 
+const xml2js = require ("xml2js"); //9/29/22 by DW
 
 const metaNames = { 
 	title: true,
@@ -174,6 +175,52 @@ function checkForNoneLengthEnclosures (theFeed) { //5/14/19 by DW
 			});
 		}
 	}
+
+function workWithNoItemsFeed (xmltext, callback) {
+	let options = {
+		explicitArray: false
+		};
+	xml2js.parseString (xmltext.toString (), options, function (err, jstruct) {
+		if (err) { 
+			callback (err);
+			}
+		else {
+			if (jstruct == null) { //12/27/21 by DW
+				let message = "Internal error: xml2js.parseString returned null.";
+				callback ({message});
+				}
+			else {
+				function getChannelValue (name) {
+					if (jstruct.rss.channel [name] === undefined) {
+						return (undefined);
+						}
+					else {
+						return (jstruct.rss.channel [name]);
+						}
+					}
+				let theFeed = {
+					head: {
+						title: getChannelValue ("title"),
+						description: getChannelValue ("description"),
+						pubDate: getChannelValue ("pubDate"),
+						link: getChannelValue ("link"),
+						language: getChannelValue ("language"),
+						copyright: getChannelValue ("copyright"),
+						generator: getChannelValue ("generator"),
+						managingEditor: getChannelValue ("managingEditor"),
+						webMaster: getChannelValue ("webMaster"),
+						lastBuildDate: getChannelValue ("lastBuildDate"),
+						category: getChannelValue ("category"),
+						docs: getChannelValue ("docs"),
+						},
+					items: []
+					};
+				callback (undefined, theFeed);
+				}
+			}
+		});
+	}
+
 function parseFeedString (theString, charset, callback, errMsgPrefix) {
 	var feedparser = new feedParser ();
 	var theFeed = {
@@ -242,8 +289,24 @@ function parseFeedString (theString, charset, callback, errMsgPrefix) {
 	feedparser.on ("end", function () {
 		if (!flCalledBack) {
 			flCalledBack = true;
-			if (callback !== undefined) {
-				callback (undefined, theFeed);
+			if (theFeed.items.length == 0) { //9/29/22 by DW
+				workWithNoItemsFeed (theString, function (err, theNewFeed) {
+					if (err) {
+						if (callback !== undefined) {
+							callback (err);
+							}
+						}
+					else {
+						if (callback !== undefined) {
+							callback (undefined, theNewFeed);
+							}
+						}
+					});
+				}
+			else {
+				if (callback !== undefined) {
+					callback (undefined, theFeed);
+					}
 				}
 			}
 		});
