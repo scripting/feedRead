@@ -1,4 +1,4 @@
-var myProductName = "davefeedread"; myVersion = "0.5.22";   
+var myProductName = "davefeedread"; myVersion = "0.5.24";   
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2022 Dave Winer
@@ -191,11 +191,22 @@ function workWithNoItemsFeed (xmltext, callback) {
 				}
 			else {
 				function getChannelValue (name) {
-					if (jstruct.rss.channel [name] === undefined) {
-						return (undefined);
+					try { //10/2/22 by DW
+						if (jstruct.rss.channel [name] === undefined) {
+							return (undefined);
+							}
+						else {
+							var val = jstruct.rss.channel [name];
+							if (typeof val == "object") { //5/18/23 by DW
+								if (val ["$"] !== undefined) {
+									val = val ["$"];
+									}
+								}
+							return (val);
+							}
 						}
-					else {
-						return (jstruct.rss.channel [name]);
+					catch (err) {
+						return (undefined);
 						}
 					}
 				let theFeed = {
@@ -212,6 +223,7 @@ function workWithNoItemsFeed (xmltext, callback) {
 						lastBuildDate: getChannelValue ("lastBuildDate"),
 						category: getChannelValue ("category"),
 						docs: getChannelValue ("docs"),
+						cloud: getChannelValue ("cloud") //5/18/23 by DW
 						},
 					items: []
 					};
