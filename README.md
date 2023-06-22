@@ -1,3 +1,13 @@
+# feedRead
+
+If you came here looking for a super-simple way to read a feed in Node.js, this is no longer the simplest or best API I have. 
+
+The new package is <a href="https://github.com/scripting/reallysimple">reallySimple</a> it's open source too, and it builds on this package, so this is still being maintained. 
+
+If you're using feedRead and are happy, keep using it. ;-)
+
+6/22/23 by DW
+
 ### What is this?
 
 It's a <a href="https://www.npmjs.com/package/davefeedread">Node package</a> that contains everything you need to read a feed. 
